@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaveText</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SaveText</h1>
+        <input type="text" id="title" placeholder="Title">
+        <textarea id="content" placeholder="Your text here..."></textarea>
+        <select id="expireOption">
+            <option value="no expire">No Expire</option>
+            <option value="1 year">1 Year</option>
+            <option value="1 month">1 Month</option>
+            <option value="1 week">1 Week</option>
+            <option value="1 day">1 Day</option>
+            <option value="1 hour">1 Hour</option>
+        </select>
+        <div class="button-container">
+            <button onclick="saveText()">Save</button>
+            <button onclick="copyText()">Copy</button>
+            <button onclick="pasteText()">Paste</button>
+            <button onclick="viewRaw()">View Raw</button>
+            <button onclick="deleteText()">Delete</button>
+        </div>
+        <p id="link"></p>
+    </div>
+    <script>
+        async function saveText() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const expireOption = document.getElementById('expireOption').value;
+
+            const response = await fetch('/api/texts/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content, expireOption })
+            });
+
+            const result = await response.json();
+            document.getElementById('link').innerText = `Link: ${result.url}`;
+        }
+
+        function copyText() {
+            const content = document.getElementById('content');
+            content.select();
+            document.execCommand('copy');
+        }
+
+        function pasteText() {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById('content').value = text;
+            });
+        }
+
+        async function viewRaw() {
+            const link = document.getElementById('link').innerText.split('Link: ')[1];
+            if (link) {
+                const response = await fetch(link);
+                const text = await response.json();
+                alert(JSON.stringify(text));
+            } else {
+                alert('No link available');
+            }
+        }
+
+        async function deleteText() {
+            const link = document.getElementById('link').innerText.split('Link: ')[1];
+            if (link) {
+                const uuid = link.split('-').pop();
+                await fetch(`/api/texts/${uuid}`, {
+                    method: 'DELETE'
+                });
+                alert('Text deleted');
+            } else {
+                alert('No link available');
+            }
+        }
+    </script>
+</body>
+</html>
