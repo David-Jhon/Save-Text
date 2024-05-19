@@ -20,7 +20,7 @@ router.post('/save', async (req, res) => {
     const text = new Text({ title, content, expireAt });
     await text.save();
 
-    res.json({ url: `http://localhost:3000/${title}-${text.uuid}` });
+    res.json({ url: `https://save-text.onrender.com/${title}-${text.uuid}` });
 });
 
 router.get('/:uuid', async (req, res) => {
