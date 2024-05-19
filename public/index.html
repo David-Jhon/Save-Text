@@ -41,7 +41,7 @@
             });
 
             const result = await response.json();
-            document.getElementById('link').innerText = `Link: ${result.url}`;
+            document.getElementById('link').innerText = `Link: https://${location.hostname}/${result.url}`;
         }
 
         function copyText() {
@@ -59,7 +59,7 @@
         async function viewRaw() {
             const link = document.getElementById('link').innerText.split('Link: ')[1];
             if (link) {
-                const response = await fetch(link);
+                const response = await fetch(`${link}/raw`);
                 const text = await response.json();
                 alert(JSON.stringify(text));
             } else {
@@ -70,7 +70,7 @@
         async function deleteText() {
             const link = document.getElementById('link').innerText.split('Link: ')[1];
             if (link) {
-                const uuid = link.split('-').pop();
+                const uuid = link.split('-').pop().split('/')[0];
                 await fetch(`/api/texts/${uuid}`, {
                     method: 'DELETE'
                 });
