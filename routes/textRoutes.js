@@ -38,7 +38,8 @@ router.get('/:title-:id/raw', async (req, res) => {
     const text = await Text.findById(id);
 
     if (text) {
-        res.json({ title: text.title, content: text.content });
+        res.type('text/plain');
+        res.send(text.content);
     } else {
         res.status(404).send('Text not found');
     }
