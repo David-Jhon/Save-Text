@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const textRoutes = require('./routes/textRoutes');
+const textRoutes = require('.src/routes/textRoutes');
 
 const app = express();
 
