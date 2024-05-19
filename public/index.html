@@ -59,7 +59,8 @@
         async function viewRaw() {
             const link = document.getElementById('link').innerText.split('Link: ')[1];
             if (link) {
-                const response = await fetch(`${link}/raw`);
+                const rawLink = link + '/raw';
+                const response = await fetch(rawLink);
                 const text = await response.json();
                 alert(JSON.stringify(text));
             } else {
