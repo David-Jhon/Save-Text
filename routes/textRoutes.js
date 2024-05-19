@@ -8,12 +8,12 @@ router.post('/save', async (req, res) => {
     const newText = new Text({ title, content, expireOption });
     await newText.save();
 
-    res.json({ url: `https://${req.hostname}/${title}-${newText._id}` });
+    res.json({ url: `${req.hostname}/${title}-${newText._id}` });
 });
 
 // Get text by ID
-router.get('/:id', async (req, res) => {
-    const id = req.params.id.split('-').pop();
+router.get('/:title-:id', async (req, res) => {
+    const { id } = req.params;
     const text = await Text.findById(id);
 
     if (text) {
@@ -33,8 +33,8 @@ router.get('/:id', async (req, res) => {
 });
 
 // Get raw text by ID
-router.get('/:id/raw', async (req, res) => {
-    const id = req.params.id.split('-').pop();
+router.get('/:title-:id/raw', async (req, res) => {
+    const { id } = req.params;
     const text = await Text.findById(id);
 
     if (text) {
@@ -46,7 +46,7 @@ router.get('/:id/raw', async (req, res) => {
 
 // Delete text by ID
 router.delete('/:id', async (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     await Text.findByIdAndDelete(id);
     res.send('Text deleted');
 });
