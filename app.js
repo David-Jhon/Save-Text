@@ -12,7 +12,7 @@ mongoose.connect(mongoURI)
     .catch(err => console.error('Failed to connect to MongoDB', err));
 
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/texts', textRoutes);
 
