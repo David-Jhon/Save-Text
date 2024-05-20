@@ -30,18 +30,24 @@
     </div>
     <script>
         async function saveText() {
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
-            const expireOption = document.getElementById('expireOption').value;
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const expireOption = document.getElementById('expireOption').value;
 
-            const response = await fetch('/api/texts/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, content, expireOption })
-            });
+    if (!content.trim()) {
+        alert('Text field cannot be empty!');
+        return;
+    }
 
-            const result = await response.json();
-            document.getElementById('link').innerText = `Link: https://${location.hostname}/${result.url}`;
+    const response = await fetch('/api/texts/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content, expireOption })
+    });
+
+    const result = await response.json();
+    const fullUrl = `${window.location.origin}/${result.url}`;
+    document.getElementById('link').innerText = `Link: ${fullUrl}`;
         }
 
         function copyText() {
@@ -69,8 +75,8 @@
         async function deleteText() {
             const link = document.getElementById('link').innerText.split('Link: ')[1];
             if (link) {
-                const uuid = link.split('-').pop().split('/')[0];
-                await fetch(`/api/texts/${uuid}`, {
+                const uniqueId = link.split('/').pop();
+                await fetch(`/api/texts/${uniqueId}`, {
                     method: 'DELETE'
                 });
                 alert('Text deleted');
