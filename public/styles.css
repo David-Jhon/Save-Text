@@ -84,40 +84,55 @@ button:hover {
 }
 
 #side-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 100%;
-    background-color: #333;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    color: #fff;
-    transition: transform 0.3s ease; 
-    transform: translateX(-200px); 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  background-color: #333;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  color: #fff;
+  transition: transform 0.3s ease;
+  transform: translateX(-200px);
 }
 
 #side-menu.show {
-    transform: translateX(0); 
+  transform: translateX(0);
 }
 
+#side-menu a {
+  color: #e0e0e0;
+  text-decoration: underline;
+  display: block;
+  padding: 5px 0;
+}
+
+#side-menu a:hover {
+  color: #ffa500;
+}
+
+/* #side-menu a:visited {
+  color: #999999;
+}
+*/
 #menu-btn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    cursor: pointer;
-    z-index: 999; 
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 999;
 }
 
 .dot {
-    width: 5px;
-    height: 5px;
-    background-color: #fff;
-    border-radius: 50%;
-    margin-bottom: 5px;
+  width: 5px;
+  height: 5px;
+  background-color: #fff;
+  border-radius: 50%;
+  margin-bottom: 5px;
 }
 
 .dot:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
