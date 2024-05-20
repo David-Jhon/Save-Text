@@ -28,12 +28,25 @@ router.post('/save', async (req, res) => {
         return res.status(400).json({ error: 'Text field cannot be empty!' });
     }
     const uniqueId = shortid.generate();
-    const newText = new Text({ title, content, expireOption, uniqueId });
+    const expireAt = getExpiryDate(expireOption); // Calculate expireAt based on expireOption
+    const newText = new Text({ title, content, expireOption, uniqueId, expireAt });
     await newText.save();
 
-    console.log(`Text saved with ID: ${uniqueId}, Title: ${title}`);
+    console.log(`Text saved with ID: ${uniqueId}, Title: ${title}, Expires At: ${expireAt}`);
 
     res.json({ url: `${uniqueId}` });
+});
+
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    const deletedText = await Text.findOneAndDelete({ uniqueId: id });
+
+    if (deletedText) {
+        console.log(`Text deleted with ID: ${id}, Title: ${deletedText.title}`);
+        res.send('Text deleted');
+    } else {
+        res.status(404).send('Text not found');
+    }
 });
 
 router.get('/:id', async (req, res) => {
@@ -94,19 +107,6 @@ router.get('/:id/raw', async (req, res) => {
         res.status(404).send('Text not found');
     }
 });
-
-router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-    const deletedText = await Text.findOneAndDelete({ uniqueId: id });
-
-    if (deletedText) {
-        console.log(`Text deleted with ID: ${id}, Title: ${deletedText.title}`);
-        res.send('Text deleted');
-    } else {
-        res.status(404).send('Text not found');
-    }
-});
-
 // Get all saved texts
 router.get('/', async (req, res) => {
     try {
