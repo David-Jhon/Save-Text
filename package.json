@@ -13,6 +13,7 @@
     "@types/node": "^18.0.6",
     "express": "^4.19.2",
     "mongoose": "^8.4.0",
-    "short-uuid": "^5.2.0"
+    "short-uuid": "^5.2.0",
+    "shortid": "^2.2.16"
   }
 }
