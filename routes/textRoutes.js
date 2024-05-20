@@ -31,10 +31,11 @@ router.post('/save', async (req, res) => {
     const newText = new Text({ title, content, expireOption, uniqueId });
     await newText.save();
 
+    console.log(`Text saved with ID: ${uniqueId}, Title: ${title}`);
+
     res.json({ url: `${uniqueId}` });
 });
 
-// Get text by unique ID and render the full HTML page
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const text = await Text.findOne({ uniqueId: id });
@@ -83,7 +84,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Get raw text by unique ID
 router.get('/:id/raw', async (req, res) => {
     const { id } = req.params;
     const text = await Text.findOne({ uniqueId: id });
@@ -95,11 +95,27 @@ router.get('/:id/raw', async (req, res) => {
     }
 });
 
-// Delete text by unique ID
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
-    await Text.findOneAndDelete({ uniqueId: id });
-    res.send('Text deleted');
+    const deletedText = await Text.findOneAndDelete({ uniqueId: id });
+
+    if (deletedText) {
+        console.log(`Text deleted with ID: ${id}, Title: ${deletedText.title}`);
+        res.send('Text deleted');
+    } else {
+        res.status(404).send('Text not found');
+    }
+});
+
+// Get all saved texts
+router.get('/', async (req, res) => {
+    try {
+        const texts = await Text.find({});
+        res.json(texts);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch saved texts' });
+    }
 });
 
 module.exports = router;
