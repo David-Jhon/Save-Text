@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SaveText</title>
     <link rel="stylesheet" href="/styles.css">
+    <style>
+    </style>
 </head>
 <body>
+    <div id="side-menu">
+        <h2>Saved Texts</h2>
+        <ul id="saved-texts"></ul>
+    </div>
     <div class="container">
         <h1>SaveText</h1>
         <input type="text" id="title" placeholder="Title">
@@ -28,7 +34,37 @@
         </div>
         <p id="link"></p>
     </div>
+    <div id="menu-btn" onclick="toggleSideMenu()">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    </div>
     <script>
+        // Function to fetch and display saved texts
+        async function fetchSavedTexts() {
+    try {
+        const response = await fetch('/api/texts');
+        if (!response.ok) {
+            throw new Error('Failed to fetch saved texts');
+        }
+        const texts = await response.json();
+        const savedTextsContainer = document.getElementById('saved-texts');
+        savedTextsContainer.innerHTML = '';
+        texts.forEach(text => {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.textContent = text.title;
+            link.href = `${window.location.origin}/api/texts/${text.uniqueId}`;
+            listItem.appendChild(link);
+            savedTextsContainer.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error(error);
+    }
+        }
+
+        window.addEventListener('load', fetchSavedTexts);
+        
         async function saveText() {
     const title = document.getElementById('title').value.trim();
     const content = document.getElementById('content').value.trim();
@@ -89,6 +125,11 @@
             } else {
                 alert('No link available');
             }
+        }
+        
+        function toggleSideMenu() {
+            const sideMenu = document.getElementById('side-menu');
+            sideMenu.classList.toggle('show');
         }
     </script>
 </body>
