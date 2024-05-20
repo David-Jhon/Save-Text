@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
 
 const textSchema = new mongoose.Schema({
     title: String,
     content: String,
-    uuid: { type: String, default: uuidv4 },
+    expireOption: String,
+    uniqueId: { type: String, unique: true, required: true },
     expireAt: Date
 });
 
