@@ -30,12 +30,13 @@
     </div>
     <script>
         async function saveText() {
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
     const expireOption = document.getElementById('expireOption').value;
 
-    if (!content.trim()) {
-        alert('Text field cannot be empty!');
+    // Check if title or content is empty
+    if (!title || !content) {
+        alert('Title and content cannot be empty.');
         return;
     }
 
@@ -45,8 +46,13 @@
         body: JSON.stringify({ title, content, expireOption })
     });
 
+    if (!response.ok) {
+        alert('Failed to save the text. Please try again.');
+        return;
+    }
+
     const result = await response.json();
-    const fullUrl = `${window.location.origin}/${result.url}`;
+    const fullUrl = `${window.location.origin}/api/texts/${result.url}`;
     document.getElementById('link').innerText = `Link: ${fullUrl}`;
         }
 
