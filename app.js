@@ -20,6 +20,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+const Text = require('./models/Text');
+
+async function deleteExpiredTexts() {
+    const now = new Date();
+    const result = await Text.deleteMany({ expireAt: { $lte: now } });
+    if (result.deletedCount > 0) {
+        console.log(`${result.deletedCount} expired text(s) deleted`);
+    }
+}
+
+setInterval(deleteExpiredTexts, 60 * 60 * 1000);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
