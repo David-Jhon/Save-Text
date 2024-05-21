@@ -53,6 +53,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const text = await Text.findOne({ uniqueId: id });
     if (text) {
+        const escapedContent = escapeHtml(text.content);
         res.send(`
             <!DOCTYPE html>
             <html lang="en">
@@ -65,7 +66,7 @@ router.get('/:id', async (req, res) => {
             <body>
                 <div class="container">
                     <h1>${text.title}</h1>
-                    <textarea id="content">${text.content}</textarea>
+                    <textarea id="content">${escapedContent}</textarea>
                     <div class="button-container">
                         <button onclick="viewRaw()">View Raw</button>
                         <button onclick="copyText()">Copy</button>
@@ -96,6 +97,24 @@ router.get('/:id', async (req, res) => {
         res.status(404).send('Text not found');
     }
 });
+
+// Helper function to escape HTML characters
+function escapeHtml(text) {
+    return text.replace(/[&<>"']/g, function (match) {
+        switch (match) {
+            case '&':
+                return '&amp;';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '"':
+                return '&quot;';
+            case "'":
+                return '&#39;';
+        }
+    });
+}
 
 router.get('/:id/raw', async (req, res) => {
     const { id } = req.params;
