@@ -9,6 +9,9 @@ Save Text is a simple web application designed to allow users to save, view, and
 - **Copy & Paste:** Easily copy text to clipboard and paste text into the app.
 - **Delete Texts:** Delete saved text snippets when they are no longer needed.
 - **Dark Theme:** Enjoy a dark-themed interface for better readability and reduced eye strain.
+- **User Authentication:** Log in or sign up to manage personal texts, with anonymous public text support.
+- **Sidebar Navigation:** Access your texts and public texts via a responsive sidebar.
+
 
 ## About
 

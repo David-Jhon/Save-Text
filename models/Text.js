@@ -5,7 +5,8 @@ const textSchema = new mongoose.Schema({
     content: String,
     expireOption: String,
     uniqueId: { type: String, unique: true, required: true },
-    expireAt: Date
+    expireAt: Date,
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }
 });
 
 textSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });

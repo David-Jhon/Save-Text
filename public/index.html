@@ -3,93 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaveText</title>
-    <link rel="stylesheet" href="/styles.css">
-    <style>
-    </style>
+    <title>SaveText - Store and Share Your Text Easily</title>
+    <meta name="description" content="SaveText is a simple tool to store and share text online. Create, edit, and share your notes securely with ease.">
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="SaveText - Store and Share Your Text Easily">
+    <meta property="og:description" content="SaveText is a simple tool to store and share text online. Create, edit, and share your notes securely with ease.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://save-text.onrender.com/">
+    <meta property="og:image" content="https://i.ibb.co/ympCjkXm/image.jpg">
+    <meta property="og:site_name" content="SaveText">
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SaveText - Store and Share Your Text Easily">
+    <meta name="twitter:description" content="SaveText is a simple tool to store and share text online. Create, edit, and share your notes securely with ease.">
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="https://i.ibb.co.com/0p1Y9K6s/favicon-32x32.png">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div id="side-menu">
-        <h2>Saved Texts</h2>
-        <ul id="saved-texts"></ul>
-    </div>
-    <div class="container">
-        <h1>SaveText</h1>
-        <input type="text" id="title" placeholder="Title">
-        <textarea id="content" placeholder="Your text here..."></textarea>
-        <select id="expireOption">
-            <option value="no expire">No Expire</option>
-            <option value="1 year">1 Year</option>
-            <option value="1 month">1 Month</option>
-            <option value="1 week">1 Week</option>
-            <option value="1 day">1 Day</option>
-            <option value="1 hour">1 Hour</option>
-        </select>
-        <div class="button-container">
-            <button onclick="saveText()">Save</button>
-            <button onclick="copyText()">Copy</button>
-            <button onclick="pasteText()">Paste</button>
-            <button onclick="viewRaw()">View Raw</button>
-            <button onclick="deleteText()">Delete</button>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex">
+    <!-- Sidebar -->
+    <div id="side-menu" class="fixed inset-y-0 left-0 w-64 bg-gray-800 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col z-40">
+        <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-gray-100 flex items-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 30" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="0" y="0" width="24" height="30" rx="3" ry="3" fill="#CBD5E1" />
+                  <rect x="5" y="6" width="14" height="2" fill="#94A3B8" />
+                  <rect x="5" y="12" width="14" height="2" fill="#94A3B8" />
+                  <rect x="5" y="18" width="10" height="2" fill="#94A3B8" />
+                </svg>
+                Saved Texts
+              </h2>
+            <!-- Close Button for Mobile -->
+            <button id="sidebar-close-btn" class="md:hidden p-2 text-gray-300 hover:text-gray-100 hidden" onclick="toggleSideMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
-        <p id="link"></p>
+        <div id="auth-section" class="p-4 flex gap-3">
+            <button id="login-btn" onclick="window.location.href='/login'" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Login</button>
+            <button id="logout-btn" onclick="logout()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition hidden">Logout</button>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+            <h3 id="my-texts-header" class="px-4 py-2 text-lg font-medium text-gray-300 hidden border-b border-gray-700">My Texts</h3>
+            <ul id="my-texts" class="px-4 space-y-2"></ul>
+            <h3 class="px-4 py-2 text-lg font-medium text-gray-300 border-b border-gray-700">Public Texts</h3>
+            <ul id="public-texts" class="px-4 space-y-2"></ul>
+        </div>
     </div>
-    <div id="menu-btn" onclick="toggleSideMenu()">
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
+    <!-- Menu Toggle Button (Hamburger) -->
+    <button id="menu-btn" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-gray-700 rounded-lg" onclick="toggleSideMenu()">
+        <svg id="menu-icon" class="w-6 h-6 text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+    <!-- Main Content -->
+    <div class="flex-1 flex justify-center items-center min-h-screen p-6 md:ml-64">
+        <div class="w-full max-w-2xl bg-gray-800 rounded-lg shadow-lg p-6">
+            <svg width="220" height="40" viewBox="0 0 220 40" xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-6">
+                <!-- Document Icon -->
+                <g transform="translate(0, 5)">
+                  <rect x="0" y="0" width="24" height="30" rx="3" ry="3" fill="#CBD5E1" />
+                  <rect x="5" y="6" width="14" height="2" fill="#94A3B8" />
+                  <rect x="5" y="12" width="14" height="2" fill="#94A3B8" />
+                  <rect x="5" y="18" width="10" height="2" fill="#94A3B8" />
+                </g>
+                <!-- Logo Text -->
+                <text x="34" y="30" font-family="Segoe UI, sans-serif" font-size="30" font-weight="bold">
+                  <tspan fill="#3B82F6">Save</tspan><tspan fill="#EF4444">Text</tspan>
+                </text>
+              </svg>
+              
+            <input type="text" id="title" placeholder="Title" class="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <textarea id="content" placeholder="Your text here..." class="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 h-48 resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            <select id="expireOption" class="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="no expire">No Expire</option>
+                <option value="1 year">1 Year</option>
+                <option value="1 month">1 Month</option>
+                <option value="1 week">1 Week</option>
+                <option value="1 day">1 Day</option>
+                <option value="1 hour">1 Hour</option>
+            </select>
+            <div class="mb-4">
+                <!-- First Row: Save, Copy, Paste -->
+                <div class="grid grid-cols-3 gap-3 md:grid-cols-5">
+                    <button onclick="saveText()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition col-span-1">Save</button>
+                    <button onclick="copyText()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition col-span-1">Copy</button>
+                    <button onclick="pasteText()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition col-span-1">Paste</button>
+                    <!-- View Raw and Delete are hidden in this grid on mobile to avoid overlap -->
+                    <button onclick="viewRaw()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition col-span-1 hidden md:block">View Raw</button>
+                    <button onclick="deleteText()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition col-span-1 hidden md:block">Delete</button>
+                </div>
+                <!-- Second Row: View Raw, Delete (Mobile Only) -->
+                <div class="grid grid-cols-2 gap-3 mt-3 md:hidden">
+                    <button onclick="viewRaw()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition col-span-1">View Raw</button>
+                    <button onclick="deleteText()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition col-span-1">Delete</button>
+                </div>
+            </div>
+            <p id="link" class="text-gray-300"></p>
+        </div>
     </div>
+
     <script>
-        // Function to fetch and display saved texts
+        let token = localStorage.getItem('token');
+
+        function logout() {
+            localStorage.removeItem('token');
+            token = null;
+            updateUI();
+            fetchSavedTexts();
+        }
+
+        function updateUI() {
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const myTextsHeader = document.getElementById('my-texts-header');
+            if (token) {
+                loginBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                myTextsHeader.classList.remove('hidden');
+            } else {
+                loginBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                myTextsHeader.classList.add('hidden');
+            }
+        }
+
         async function fetchSavedTexts() {
-    try {
-        const response = await fetch('/api/texts');
-        if (!response.ok) {
-            throw new Error('Failed to fetch saved texts');
+            try {
+                const headers = token ? { Authorization: `Bearer ${token}` } : {};
+                const response = await fetch('/api/texts', { headers });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch saved texts');
+                }
+                const data = await response.json();
+                const myTextsContainer = document.getElementById('my-texts');
+                const publicTextsContainer = document.getElementById('public-texts');
+                myTextsContainer.innerHTML = '';
+                publicTextsContainer.innerHTML = '';
+
+                const addTextToList = (container, texts) => {
+                    texts.forEach((text, index, array) => {
+                        const listItem = document.createElement('li');
+                        let liClasses = 'py-2';
+                        if (index < array.length - 1) {
+                            liClasses += ' border-b border-gray-700';
+                        }
+                        listItem.className = liClasses;
+
+                        const textWrapper = document.createElement('div');
+                        textWrapper.className = 'flex items-center';
+
+                        const dot = document.createElement('span');
+                        dot.textContent = '•';
+                        dot.className = 'mr-2 text-gray-500';
+                        textWrapper.appendChild(dot);
+
+                        const link = document.createElement('a');
+                        link.textContent = text.title;
+                        link.href = `${window.location.origin}/api/texts/${text.uniqueId}`;
+                        link.className = 'text-blue-400 hover:text-blue-300 truncate';
+                        textWrapper.appendChild(link);
+                        listItem.appendChild(textWrapper);
+                        container.appendChild(listItem);
+                    });
+                };
+
+                if (token) {
+                    addTextToList(myTextsContainer, data.myTexts);
+                }
+                addTextToList(publicTextsContainer, data.publicTexts);
+            } catch (error) {
+                console.error(error);
+            }
         }
-        const texts = await response.json();
-        const savedTextsContainer = document.getElementById('saved-texts');
-        savedTextsContainer.innerHTML = '';
-        texts.forEach(text => {
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-            link.textContent = text.title;
-            link.href = `${window.location.origin}/api/texts/${text.uniqueId}`;
-            listItem.appendChild(link);
-            savedTextsContainer.appendChild(listItem);
+
+        window.addEventListener('load', () => {
+            updateUI();
+            fetchSavedTexts();
         });
-    } catch (error) {
-        console.error(error);
-    }
-        }
 
-        window.addEventListener('load', fetchSavedTexts);
-        
         async function saveText() {
-    const title = document.getElementById('title').value.trim();
-    const content = document.getElementById('content').value.trim();
-    const expireOption = document.getElementById('expireOption').value;
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            const expireOption = document.getElementById('expireOption').value;
 
-    // Check if title or content is empty
-    if (!title || !content) {
-        alert('Title and content cannot be empty.');
-        return;
-    }
+            if (!title || !content) {
+                alert('Title and content cannot be empty.');
+                return;
+            }
 
-    const response = await fetch('/api/texts/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content, expireOption })
-    });
+            const headers = token ? { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            } : { 'Content-Type': 'application/json' };
 
-    if (!response.ok) {
-        alert('Failed to save the text. Please try again.');
-        return;
-    }
+            const response = await fetch('/api/texts/save', {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ title, content, expireOption })
+            });
 
-    const result = await response.json();
-    const fullUrl = `${window.location.origin}/api/texts/${result.url}`;
-    document.getElementById('link').innerText = `Link: ${fullUrl}`;
+            if (!response.ok) {
+                alert('Failed to save the text. Please try again.');
+                return;
+            }
+
+            const result = await response.json();
+            const fullUrl = `${window.location.origin}/api/texts/${result.url}`;
+            document.getElementById('link').innerText = `Link: ${fullUrl}`;
+            fetchSavedTexts();
         }
 
         function copyText() {
@@ -118,18 +242,33 @@
             const link = document.getElementById('link').innerText.split('Link: ')[1];
             if (link) {
                 const uniqueId = link.split('/').pop();
+                const headers = token ? { Authorization: `Bearer ${token}` } : {};
                 await fetch(`/api/texts/${uniqueId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers
                 });
                 alert('Text deleted');
+                fetchSavedTexts();
             } else {
                 alert('No link available');
             }
         }
-        
+
         function toggleSideMenu() {
             const sideMenu = document.getElementById('side-menu');
-            sideMenu.classList.toggle('show');
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+
+            sideMenu.classList.toggle('-translate-x-full');
+            const isSideMenuOpen = !sideMenu.classList.contains('-translate-x-full');
+
+            if (isSideMenuOpen) {
+                menuBtn.classList.add('hidden');
+                sidebarCloseBtn.classList.remove('hidden');
+            } else {
+                menuBtn.classList.remove('hidden');
+                sidebarCloseBtn.classList.add('hidden');
+            }
         }
     </script>
 </body>
