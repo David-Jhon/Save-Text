@@ -58,6 +58,8 @@ router.post('/save', async (req, res) => {
     });
     try {
         await newText.save();
+        console.log(`Text saved with ID: ${uniqueId}, Title: ${title}, Expires At: ${expireAt}`);
+
         res.json({ url: `${uniqueId}` });
     } catch (error) {
         console.error("Error saving text:", error);
@@ -116,6 +118,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const deletedText = await Text.findOneAndDelete(query);
         if (deletedText) {
+            console.log(`Text deleted with ID: ${id}, Title: ${deletedText.title}`);
             res.json({ message: 'Text deleted successfully' });
         } else {
             res.status(404).json({ error: 'Text not found or you are not authorized to delete it.' });
